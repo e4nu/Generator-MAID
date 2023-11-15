@@ -243,23 +243,23 @@ void MakePlots (void)
     string res_name = utils::res::AsString(ResID) ;
     gA12_p[ResID]->SetTitle((res_name).c_str());
     gA12_p[ResID]->GetXaxis()->SetTitle("Q^{2}[GeV^{2}]");
-    gA12_p[ResID]->GetYaxis()->SetTitle("A_{1/2}^{p} #left[10^{-3} GeV^{-1/2}#right]");
+    gA12_p[ResID]->GetYaxis()->SetTitle("A_{1/2}^{p} #left[GeV^{-1/2}#right]");
     gA32_p[ResID]->SetTitle((res_name).c_str());
     gA32_p[ResID]->GetXaxis()->SetTitle("Q^{2}[GeV^{2}]");
-    gA32_p[ResID]->GetYaxis()->SetTitle("A_{3/2}^{p} #left[10^{-3} GeV^{-1/2}#right]");
+    gA32_p[ResID]->GetYaxis()->SetTitle("A_{3/2}^{p} #left[GeV^{-1/2}#right]");
     gS12_p[ResID]->SetTitle((res_name).c_str());
     gS12_p[ResID]->GetXaxis()->SetTitle("Q^{2}[GeV^{2}]");
-    gS12_p[ResID]->GetYaxis()->SetTitle("S_{1/2}^{p} #left[10^{-3} GeV^{-1/2}#right]");
+    gS12_p[ResID]->GetYaxis()->SetTitle("S_{1/2}^{p} #left[GeV^{-1/2}#right]");
     
     gA12_n[ResID]->SetTitle((res_name).c_str());
     gA12_n[ResID]->GetXaxis()->SetTitle("Q^{2}[GeV^{2}]");
-    gA12_n[ResID]->GetYaxis()->SetTitle("A_{1/2}^{n} #left[10^{-3} GeV^{-1/2}#right]");
+    gA12_n[ResID]->GetYaxis()->SetTitle("A_{1/2}^{n} #left[GeV^{-1/2}#right]");
     gA32_n[ResID]->SetTitle((res_name).c_str());
     gA32_n[ResID]->GetXaxis()->SetTitle("Q^{2}[GeV^{2}]");
-    gA32_n[ResID]->GetYaxis()->SetTitle("A_{3/2}^{n} #left[10^{-3} GeV^{-1/2}#right]");
+    gA32_n[ResID]->GetYaxis()->SetTitle("A_{3/2}^{n} #left[GeV^{-1/2}#right]");
     gS12_n[ResID]->SetTitle((res_name).c_str());
     gS12_n[ResID]->GetXaxis()->SetTitle("Q^{2}[GeV^{2}]");
-    gS12_n[ResID]->GetYaxis()->SetTitle("S_{1/2}^{n} #left[10^{-3} GeV^{-1/2}#right]");
+    gS12_n[ResID]->GetYaxis()->SetTitle("S_{1/2}^{n} #left[GeV^{-1/2}#right]");
 
     gA12_p[ResID]->Write(("A12_p_"+res_name).c_str()) ; 
     gA32_p[ResID]->Write(("A32_p_"+res_name).c_str()) ; 

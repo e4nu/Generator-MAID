@@ -61,12 +61,13 @@ private:
   RESVectFormFactorsI * fVFFEMp ;
   RESVectFormFactorsI * fVFFEMn ;
 
+  bool     fWghtBW;            ///< weight with resonance breit-wigner?
+  bool     fNormBW;            ///< normalize resonance breit-wigner to 1?
   bool     fUsingDisResJoin;   ///< use a DIS/RES joining scheme?
   double   fWcut;              ///< apply DIS/RES joining scheme < Wcut
   double   fN2ResMaxNWidths;   ///< limits allowed phase space for n=2 res
   double   fN0ResMaxNWidths;   ///< limits allowed phase space for n=0 res
   double   fGnResMaxNWidths;   ///< limits allowed phase space for other res
-  string   fKFTable;             ///< table of Fermi momentum (kF) constants for various nuclei
   bool     fUseRFGParametrization; ///< use parametrization for fermi momentum insted of table?
   bool     fUsePauliBlocking;      ///< account for Pauli blocking?
   double   fRESScaling ; //< Overall scaling 

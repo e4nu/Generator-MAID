@@ -79,7 +79,23 @@ double MAIDRESVectorXSec::XSec( const Interaction * interaction, KinePhaseSpace_
   double k = 0.5 * ( W2 - Mnuc2) / Mnuc ;
 
   Resonance_t resonance = interaction->ExclTag().Resonance();
-  double MR = utils::res::Mass(resonance) ;
+
+  // Get baryon resonance parameters
+  int    IR  = utils::res::ResonanceIndex    (resonance);
+  int    LR  = utils::res::OrbitalAngularMom (resonance);
+  double MR  = utils::res::Mass              (resonance);
+  double WR  = utils::res::Width             (resonance);
+  double NR  = fNormBW?utils::res::BWNorm    (resonance,fN0ResMaxNWidths,fN2ResMaxNWidths,fGnResMaxNWidths):1;
+
+  // Following NeuGEN, avoid problems with underlying unphysical
+  // model assumptions by restricting the allowed W phase space
+  // around the resonance peak
+  if (fNormBW) {
+    if      (W > MR + fN0ResMaxNWidths * WR && IR==0) return 0.;
+    else if (W > MR + fN2ResMaxNWidths * WR && IR==2) return 0.;
+    else if (W > MR + fGnResMaxNWidths * WR)          return 0.;
+  }
+
   double MR2 = TMath::Power(MR,2);
   double kres = 0.5 * ( W2 - MR2 ) / MR ; 
   double v = k - 0.5 * q2/Mnuc ;
@@ -117,11 +133,32 @@ double MAIDRESVectorXSec::XSec( const Interaction * interaction, KinePhaseSpace_
 
   double xsecT = factor * ( Ampl2A12 + Ampl2A32 ) ;
   double xsecL = 2 * factor * Q2 * MR2 * Ampl2S12 / ( Mnuc2 * q3Vect2 ) ;
+
+#ifdef __GENIE_LOW_LEVEL_MESG_ENABLED__
+  LOG("MAIDRESVectorXSec", pDEBUG) << "sig_{0} = " << xsecT;
+  LOG("MAIDRESVectorXSec", pDEBUG) << "sig_{L} = " << xsecL;
+#endif
   
   double xsec = Gamma * ( xsecT + epsilon * xsecL ) ; 
   xsec = TMath::Max(0.,xsec) ; 
 
   xsec *= fRESScaling ; 
+
+  // Check whether the cross section is to be weighted with a Breit-Wigner distribution
+  // (default: true)
+  double bw = 1.0;
+  if ( fWghtBW ) {
+    bw = utils::bwfunc::BreitWignerL(W,LR,MR,WR,NR);
+  }
+  xsec *= bw;
+
+#ifdef __GENIE_LOW_LEVEL_MESG_ENABLED__
+  LOG("BSKLNBaseRESPXSec2014", pINFO)
+    << "\n d2xsec/dQ2dW"  << "[" << interaction->AsString()
+    << "](W=" << W << ", q2=" << q2 << ", E=" << E << ") = " << xsec;
+#endif
+
+  // No modifications for nuclei yet
 
   return xsec ; 
 }
@@ -185,6 +222,19 @@ void MAIDRESVectorXSec::LoadConfig(void)
 
   // Use algorithm within a DIS/RES join scheme. If yes get Wcut
   this->GetParam( "RES-EM-XSecScale", fRESScaling ) ; 
+
+  this->GetParamDef( "BreitWignerWeight", fWghtBW, true ) ;
+  this->GetParamDef( "BreitWignerNorm",   fNormBW, true);
+
+  // NeuGEN limits in the allowed resonance phase space:
+  // W < min{ Wmin(physical), (res mass) + x * (res width) }
+  // It limits the integration area around the peak and avoids the
+  // problem with huge xsec increase at low Q2 and high W.
+  // In correspondence with Hugh, Rein said that the underlying problem
+  // are unphysical assumptions in the model.
+  this->GetParamDef( "MaxNWidthForN2Res", fN2ResMaxNWidths, 2.0 ) ;
+  this->GetParamDef( "MaxNWidthForN0Res", fN0ResMaxNWidths, 6.0 ) ;
+  this->GetParamDef( "MaxNWidthForGNRes", fGnResMaxNWidths, 4.0 ) ;
 
   fXSecIntegrator = dynamic_cast<const XSecIntegratorI *> (this->SubAlg("XSec-Integrator"));
   if( !fXSecIntegrator ) {
