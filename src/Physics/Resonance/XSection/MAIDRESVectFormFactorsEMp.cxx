@@ -50,21 +50,25 @@ RESVectFFAmplitude MAIDRESVectFormFactorsEMp::Compute( const Interaction interac
   double q6 = TMath::Power( q2, 3 ) ; 
   double q8 = TMath::Power( q2, 4 ) ; 
 
-  double W2     = TMath::Power( kinematics.W(), 2);
-  double Mnuc2  = TMath::Power(target.HitNucMass(), 2);
-  double MR  = utils::res::Mass(res);
-  double kR = (MR*MR - Mnuc2)/(2.*MR); 
+  if( res == kP33_1232 ) {
+    double Mnuc2  = TMath::Power(target.HitNucMass(), 2);
+    double Mnuc3  = TMath::Power(target.HitNucMass(), 3);
+    double MR  = utils::res::Mass(res);
+    double MR2 = TMath::Power(MR,2);
+    double kR = TMath::Sqrt( TMath::Power((MR2-Mnuc2+q2)*0.5/MR,2) -q2 ); // kR(W=MR,Q)
+    double kR2 = TMath::Power(kR,2);
+    double kappaR = (MR2 - Mnuc2)*0.5/MR;                                 // kR(W=MR,Q=0)
+    double cdelta = TMath::Sqrt(Mnuc3*kappaR/(4*kPi*kAem*MR*kR2));
 
-  if( res == kP33_1232 ) { 
     // Dipole form facor
     double GD = 1./TMath::Power(1-q2/fDipoleMass,2) ;
     // Transition form factors
     double GM = fAM0_P33_1232 * (1. - fBetaM_P33_1232 * q2) * TMath::Exp( fGammaM_P33_1232 * q2 ) * GD;
     double GE = fAE0_P33_1232 * (1. - fBetaE_P33_1232 * q2) * TMath::Exp( fGammaE_P33_1232 * q2 ) * GD;
     double GC = fAC0_P33_1232 * (1. - fBetaC_P33_1232 * q2) / (1. - fDC_P33_1232 * q2/(4.*Mnuc2))*2*MR/kR*TMath::Exp( fGammaC_P33_1232 * q2 ) * GD; 
-    ampl.SetAmplA12( (3.*GE+GM)/2. );
-    ampl.SetAmplA32( TMath::Sqrt(3.)/2.*(GE-GM) );
-    ampl.SetAmplS12( TMath::Sqrt(2.)*GC );
+    ampl.SetAmplA12( 1./(4*cdelta) *(3*GE-GM) );
+    ampl.SetAmplA32( -TMath::Sqrt(3.)/(4.*cdelta)*(GE+GM) );
+    ampl.SetAmplS12( kR/(TMath::Sqrt(8.)*cdelta*MR) * GC );
   } else { 
     double A120 = fA120P[res] ;
     double A12Alpha1 = fA12Alpha1P[res] ;

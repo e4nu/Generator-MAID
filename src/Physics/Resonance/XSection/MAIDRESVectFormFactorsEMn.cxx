@@ -45,27 +45,25 @@ RESVectFFAmplitude MAIDRESVectFormFactorsEMn::Compute( const Interaction interac
   
   //Get kinematical parameters
   const Kinematics & kinematics = interaction.Kine();
-  double W  = kinematics.W();
   double q2 = kinematics.q2();
 
-  //Compute auxiliary & kinematical factors
-  double Mnuc   = target.HitNucMass();
-  double W2     = TMath::Power(W,    2);
-  double Mnuc2  = TMath::Power(Mnuc, 2);
-
-  double MR  = utils::res::Mass(res);
-  double kR = (MR*MR - Mnuc2)/(2.*MR);
-
-  double tau = -q2/(4.*Mnuc2);  
-
   if( res == kP33_1232 ) { 
+    double Mnuc2  = TMath::Power(target.HitNucMass(), 2);
+    double Mnuc3  = TMath::Power(target.HitNucMass(), 3);
+    double MR  = utils::res::Mass(res);
+    double MR2 = TMath::Power(MR,2);
+    double kR = TMath::Sqrt( TMath::Power((MR2-Mnuc2+q2)*0.5/MR,2) -q2 ); // kR(W=MR,Q)
+    double kR2 = TMath::Power(kR,2);
+    double kappaR = (MR2 - Mnuc2)*0.5/MR;                                 // kR(W=MR,Q=0)
+    double cdelta = TMath::Sqrt(Mnuc3*kappaR/(4*kPi*kAem*MR*kR2));
+				
     double GD = 1./TMath::Power(1-q2/fDipoleMass,2); 
-    double AM = fAM0_P33_1232 * (1. - fBetaM_P33_1232 * q2) * TMath::Exp( fGammaM_P33_1232 * q2 ) * GD;
-    double AE = fAE0_P33_1232 * (1. - fBetaE_P33_1232 * q2) * TMath::Exp( fGammaE_P33_1232 * q2 ) * GD;
-    double AC = fAC0_P33_1232 * (1. - fBetaC_P33_1232 * q2) / (1. - fDC_P33_1232 * q2/(4.*Mnuc2) ) * (2*MR)/kR * TMath::Exp( fGammaC_P33_1232 * q2 ) * GD; 
-    ampl.SetAmplA12( (3.*AE+AM)/2. );
-    ampl.SetAmplA32( TMath::Sqrt(3.)/2.*(AE-AM) );
-    ampl.SetAmplS12( TMath::Sqrt(2.)*AC );
+    double GM = fAM0_P33_1232 * (1. - fBetaM_P33_1232 * q2) * TMath::Exp( fGammaM_P33_1232 * q2 ) * GD;
+    double GE = fAE0_P33_1232 * (1. - fBetaE_P33_1232 * q2) * TMath::Exp( fGammaE_P33_1232 * q2 ) * GD;
+    double GC = fAC0_P33_1232 * (1. - fBetaC_P33_1232 * q2) / (1. - fDC_P33_1232 * q2/(4.*Mnuc2) ) * (2*MR)/kR * TMath::Exp( fGammaC_P33_1232 * q2 ) * GD; 
+    ampl.SetAmplA12( 1./(4*cdelta) *(3*GE-GM) );
+    ampl.SetAmplA32( -TMath::Sqrt(3.)/(4.*cdelta)*(GE+GM) );
+    ampl.SetAmplS12( kR/(TMath::Sqrt(8.)*cdelta*MR) * GC );
   } else {
     double A120 = fA120N[res] ;
     double A12Alpha = fA12AlphaN[res] ;
