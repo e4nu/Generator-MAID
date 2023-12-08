@@ -168,14 +168,14 @@ void MakePlots (void)
       inter_n->KinePtr()->SetW(Q2) ;
 
       RESVectFFAmplitude vffampl_p = vffmodel_p->Compute(*inter_p);
-      A12_p.push_back( vffampl_p.AmplA12() ) ;
-      A32_p.push_back( vffampl_p.AmplA32() ) ;
-      S12_p.push_back( vffampl_p.AmplS12() ) ;
+      A12_p.push_back( vffampl_p.AmplA12() / TMath::Sqrt(115./130.) ) ;
+      A32_p.push_back( vffampl_p.AmplA32() / TMath::Sqrt(115./130.) ) ;
+      S12_p.push_back( vffampl_p.AmplS12() / TMath::Sqrt(115./130.) ) ;
 
       RESVectFFAmplitude vffampl_n = vffmodel_n->Compute(*inter_n);
-      A12_n.push_back( vffampl_n.AmplA12() ) ;
-      A32_n.push_back( vffampl_n.AmplA32() ) ;
-      S12_n.push_back( vffampl_n.AmplS12() ) ;
+      A12_n.push_back( vffampl_n.AmplA12() / TMath::Sqrt(115./130.) ) ;
+      A32_n.push_back( vffampl_n.AmplA32() / TMath::Sqrt(115./130.) ) ;
+      S12_n.push_back( vffampl_n.AmplS12() / TMath::Sqrt(115./130.) ) ;
       Q2_binning.push_back( Q2 ) ;        
     }
 
