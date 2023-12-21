@@ -117,6 +117,19 @@ Resonance_t kResId[kNRes] = {
   kP11_1710, kF17_1970 
 };
 
+// Validation arrays
+std::vector<double> A12_Delta {-138.7,-156.45,-127.42,-93.55,-66.13,-35.48,-24.19,-14.52,-8.06,-6.45,-4.84} ; 
+std::vector<double> Q2_A12_Delta {0,0.12,0.44,0.72,1.13,1.93,2.51,3.34,4.57,5.34,5.93};
+TGraph* gA12_Delta_MAID07 = new TGraph( Q2_A12_Delta.size(), &Q2_A12_Delta[0], &A12_Delta[0] );
+
+std::vector<double> A32_Delta {-253.85,-297.44,-217.95,-153.85,-100,-51.23,-51.28,-28.21,-17.95,-10.26};
+std::vector<double> Q2_A32_Delta {0,0.12,0.53,.94,1.48,2.52,3.60,4.76,4.76,6.03};
+TGraph* gA32_Delta_MAID07 = new TGraph( Q2_A32_Delta.size(), &Q2_A32_Delta[0], &A32_Delta[0] );
+
+std::vector<double> S12_Delta {20,26.9,28.46,26.15,21.54,16.41,13.33,9.74,4.87,3.33,2.31,1.54};
+std::vector<double> Q2_S12_Delta {0,0.13,0.26,0.45,0.71,1.06,1.32,1.81,3.03,3.77,4.81,5.97};
+TGraph* gS12_Delta_MAID07 = new TGraph( Q2_S12_Delta.size(), &Q2_S12_Delta[0], &S12_Delta[0] );
+
 // function prototypes
 void GetCommandLineArgs (int argc, char ** argv);
 bool InitializeMembers(void) ; 
@@ -186,6 +199,12 @@ void MakePlots (void)
 	S12_p[i] /= TMath::Sqrt(115./130.);
 	S12_n[i] /= TMath::Sqrt(115./130.);
       }
+
+      double factor = 1;
+      XSec_p_T_Q2.push_back( factor * ( pow(vffampl_p.AmplA12(),2)+pow(vffampl_p.AmplA32(),2) ));
+      XSec_p_L_Q2.push_back( factor * ( pow(vffampl_p.AmplS12(),2) ));
+      XSec_n_T_Q2.push_back( factor * ( pow(vffampl_n.AmplA12(),2)+pow(vffampl_n.AmplA32(),2) ));
+      XSec_n_L_Q2.push_back( factor * ( pow(vffampl_n.AmplS12(),2) ));
 
       Q2_binning.push_back( Q2 ) ;        
     }
@@ -263,13 +282,13 @@ void MakePlots (void)
     gXSec_n_T_W[ResID]->SetTitle((res_name+" ; Q2=0.5GeV^{2}").c_str());
     gXSec_n_T_W[ResID]->GetXaxis()->SetTitle("W [GeV]");
     gXSec_n_T_W[ResID]->GetYaxis()->SetTitle("#sigma_{T}^{n} #left[?#right]");
-    gXSec_n_T_W[ResID]->Write(("XSecT_"+res_name+"_vs_W").c_str()) ;
+    //    gXSec_n_T_W[ResID]->Write(("XSecT_"+res_name+"_vs_W").c_str()) ;
 
     gXSec_n_L_W[ResID] = new TGraph( W_binning.size(), &W_binning[0], &XSec_n_L_W[0] ) ;
     gXSec_n_L_W[ResID]->SetTitle((res_name+" ; Q2=0.5GeV^{2}").c_str());
     gXSec_n_L_W[ResID]->GetXaxis()->SetTitle("W [GeV]");
     gXSec_n_L_W[ResID]->GetYaxis()->SetTitle("#sigma_{L}^{n} #left[?#right]");
-    gXSec_n_L_W[ResID]->Write(("XSecL_"+res_name+"_vs_W").c_str()) ;
+    //gXSec_n_L_W[ResID]->Write(("XSecL_"+res_name+"_vs_W").c_str()) ;
 
     gXSec_n_T_Q2[ResID] = new TGraph( Q2_binning.size(), &Q2_binning[0], &XSec_n_T_Q2[0] ) ;
     gXSec_n_T_Q2[ResID]->SetTitle((res_name+" ; W = M_{RES}" ).c_str());
@@ -287,13 +306,13 @@ void MakePlots (void)
     gXSec_n_T_W[ResID]->SetTitle((res_name+" ; Q2=0.5GeV^{2}").c_str());
     gXSec_n_T_W[ResID]->GetXaxis()->SetTitle("W [GeV]");
     gXSec_n_T_W[ResID]->GetYaxis()->SetTitle("#sigma_{T}^{n} #left[?#right]");
-    gXSec_n_T_W[ResID]->Write(("XSecT_"+res_name+"_vs_W").c_str()) ;
+    //gXSec_n_T_W[ResID]->Write(("XSecT_"+res_name+"_vs_W").c_str()) ;
 
     gXSec_n_L_W[ResID] = new TGraph( W_binning.size(), &W_binning[0], &XSec_n_L_W[0] ) ;
     gXSec_n_L_W[ResID]->SetTitle((res_name+" ; Q2=0.5GeV^{2}").c_str());
     gXSec_n_L_W[ResID]->GetXaxis()->SetTitle("W [GeV]");
     gXSec_n_L_W[ResID]->GetYaxis()->SetTitle("#sigma_{L}^{n} #left[?#right]");
-    gXSec_n_L_W[ResID]->Write(("XSecL_"+res_name+"_vs_W").c_str()) ;
+    //gXSec_n_L_W[ResID]->Write(("XSecL_"+res_name+"_vs_W").c_str()) ;
 
     // Clear vectors 
     A12_p.clear();
